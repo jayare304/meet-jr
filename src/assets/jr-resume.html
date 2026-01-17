@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JR Crosby - Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a1a1a;
+      --accent: #da7756;  /* Claude terracotta */
+      --light: #faf9f7;   /* Warm cream */
+      --muted: #6b7280;
+      --border: #e8e4df;  /* Warmer border */
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--primary);
+      background: white;
+    }
+
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2.4in 1fr;
+    }
+
+    /* LEFT COLUMN */
+    .sidebar {
+      background: var(--primary);
+      color: white;
+      padding: 0.5in 0.35in;
+    }
+
+    .name {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .tagline {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.35in;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 0.35in;
+      padding-bottom: 0.25in;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      margin-top: 0.3in;
+    }
+
+    .contact-item {
+      font-size: 10px;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .contact-item a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+    }
+
+    .partner-cloud {
+      font-size: 9px;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .partner-cloud span {
+      display: inline;
+    }
+
+    .partner-highlight {
+      color: white;
+      font-weight: 500;
+    }
+
+    .skills-list {
+      font-size: 9px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .skills-list li {
+      margin-bottom: 6px;
+      list-style: none;
+      position: relative;
+      padding-left: 12px;
+    }
+
+    .skills-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .philosophy {
+      font-size: 10px;
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+      border-left: 2px solid var(--accent);
+      padding-left: 12px;
+      margin-top: 0.3in;
+    }
+
+    /* RIGHT COLUMN */
+    .main {
+      padding: 0.5in 0.4in 0.5in 0.35in;
+    }
+
+    .main-header {
+      margin-bottom: 0.3in;
+      padding-bottom: 0.2in;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .main-header h2 {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
+
+    .main-header p {
+      font-size: 11px;
+      color: var(--primary);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .experience-section {
+      margin-bottom: 0.25in;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .company {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .location {
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .role-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .role {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .dates {
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .exp-bullets {
+      list-style: none;
+      font-size: 10px;
+      color: #374151;
+    }
+
+    .exp-bullets li {
+      margin-bottom: 5px;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .exp-bullets li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 10px;
+    }
+
+    .exp-bullets .highlight {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .sub-roles {
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .section-divider {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary);
+      margin: 0.25in 0 0.15in 0;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .project {
+      background: var(--light);
+      padding: 10px 12px;
+      border-radius: 4px;
+    }
+
+    .project-name {
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .project-desc {
+      font-size: 9px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .education-line {
+      font-size: 10px;
+    }
+
+    .edu-school {
+      font-weight: 600;
+    }
+
+    .edu-degree {
+      color: var(--muted);
+    }
+
+    .cta-box {
+      margin-top: 0.25in;
+      padding: 12px 14px;
+      background: var(--primary);
+      color: white;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cta-text {
+      font-size: 10px;
+    }
+
+    .cta-text strong {
+      color: var(--accent);
+    }
+
+    .cta-url {
+      font-size: 9px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { width: 100%; min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- LEFT COLUMN -->
+    <aside class="sidebar">
+      <h1 class="name">JR Crosby</h1>
+      <p class="tagline">Builder · Partner · Strategist</p>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-number">14+</div>
+          <div class="stat-label">Years AdTech</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">$15M</div>
+          <div class="stat-label">Revenue Built</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">20+</div>
+          <div class="stat-label">Partnerships</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">1.7K</div>
+          <div class="stat-label">Hours in AI</div>
+        </div>
+      </div>
+
+      <div class="section-title">Contact</div>
+      <div class="contact-item">Rutherford, NJ</div>
+      <div class="contact-item">(304) 685-7058</div>
+      <div class="contact-item"><a href="mailto:JayAre304@gmail.com">JayAre304@gmail.com</a></div>
+      <div class="contact-item"><a href="https://linkedin.com/in/jrcrosby">linkedin.com/in/jrcrosby</a></div>
+
+      <div class="section-title">Partners Managed</div>
+      <div class="partner-cloud">
+        <span class="partner-highlight">Google</span> · <span class="partner-highlight">Meta</span> · <span class="partner-highlight">Trade Desk</span> · LiveRamp · Experian · Circana · NielsenIQ · Koddi · Epsilon · TransUnion · Seek · Cardlytics · StackAdapt · Rokt · Disco · GrowthLoop
+      </div>
+
+      <div class="section-title">Technical</div>
+      <ul class="skills-list">
+        <li>Python, React, Electron</li>
+        <li>Anthropic API, Claude Code</li>
+        <li>Snowflake, Data Architecture</li>
+        <li>Multi-Agent Orchestration</li>
+        <li>Programmatic, DSPs, DMPs</li>
+      </ul>
+
+      <p class="philosophy">"I build systems that help people work better—whether that's a $7M data partnership or an AI agent that checks its own work."</p>
+    </aside>
+
+    <!-- RIGHT COLUMN -->
+    <main class="main">
+      <header class="main-header">
+        <h2>Experience</h2>
+      </header>
+
+      <div class="experience-section">
+        <div class="exp-header">
+          <span class="company">Gopuff</span>
+          <span class="location">New York Metro</span>
+        </div>
+        <div class="role-line">
+          <span class="role">Director, AdTech & Data Partnerships</span>
+          <span class="dates">2021 – Present</span>
+        </div>
+        <div class="sub-roles">Previously: Sr. Manager, Partnerships → Sr. Client Partner</div>
+        <ul class="exp-bullets">
+          <li>Scaled data monetization <span class="highlight">$3M → $14.8M</span> (5x growth)</li>
+          <li>Closed largest partnership deal at <span class="highlight">$7M annually</span></li>
+          <li>Own 60% of department revenue directly; 90% flows through my partnerships</li>
+          <li>Led RFI/RFP to select Koddi as ad server—negotiated best-in-class terms</li>
+          <li>Onboarded Seek Insights platform; created new supplier licensing revenue stream</li>
+          <li>Identified emerging vendors pre-market (Koddi → Best Buy, Seek → Fanatics)</li>
+        </ul>
+      </div>
+
+      <div class="experience-section">
+        <div class="exp-header">
+          <span class="company">Xaxis (GroupM / WPP)</span>
+          <span class="location">New York, NY</span>
+        </div>
+        <div class="role-line">
+          <span class="role">SVP, Product & Strategy</span>
+          <span class="dates">2013 – 2020</span>
+        </div>
+        <div class="sub-roles">Rose from Sr. Audience Strategist → Director → VP → SVP</div>
+        <ul class="exp-bullets">
+          <li>Directed strategy across <span class="highlight">$150MM+ annual spend</span></li>
+          <li>Won Ford account via year-long pursuit—<span class="highlight">$90M managed spend</span></li>
+          <li>Created Headlight organization (still active today)</li>
+          <li>Led training on programmatic, DSPs, SSPs, DMPs, audience strategy</li>
+        </ul>
+      </div>
+
+      <div class="experience-section">
+        <div class="exp-header">
+          <span class="company">Triad → CitrusAd</span>
+          <span class="location">FL / NY</span>
+        </div>
+        <div class="role-line">
+          <span class="role">VP, Product Strategy / VP, Agency Strategy</span>
+          <span class="dates">2017 – 2021</span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Built Retail Response product—<span class="highlight">$2M+ revenue</span></li>
+          <li>Served as acquisition liaison between Xaxis and Triad</li>
+        </ul>
+      </div>
+
+      <div class="section-divider">AI & Technical Projects</div>
+      <div class="project-grid">
+        <div class="project">
+          <div class="project-name">Chow Chow</div>
+          <div class="project-desc">Electron app orchestrating multiple Claude/Gemini CLI agents with voice input & inter-agent messaging</div>
+        </div>
+        <div class="project">
+          <div class="project-name">Good Keep</div>
+          <div class="project-desc">Family memory-sharing iOS app in TestFlight—full-stack development</div>
+        </div>
+        <div class="project">
+          <div class="project-name">Multi-Agent Framework</div>
+          <div class="project-desc">Cross-platform orchestration (Claude, GPT, Gemini) with sprint planning & code review protocols</div>
+        </div>
+        <div class="project">
+          <div class="project-name">Voice-to-Agent Pipeline</div>
+          <div class="project-desc">Local Whisper transcription → agent routing → structured output</div>
+        </div>
+      </div>
+
+      <div class="section-divider">Education</div>
+      <p class="education-line">
+        <span class="edu-school">West Virginia University</span> · <span class="edu-degree">BS Business Administration, Marketing · 2004</span>
+      </p>
+
+      <div class="cta-box">
+        <span class="cta-text">Want the full story? <strong>Skip the resume.</strong></span>
+        <span class="cta-url">→ jrcrosby.info</span>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
