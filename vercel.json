@@ -1,7 +1,8 @@
 {
-  "buildCommand": null,
+  "buildCommand": "npm install",
   "outputDirectory": "src",
   "rewrites": [
+    { "source": "/chat", "destination": "/chat/index.html" },
     { "source": "/timeline", "destination": "/timeline/index.html" },
     { "source": "/timeline/(.*)", "destination": "/timeline/$1" }
   ]
