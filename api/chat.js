@@ -83,7 +83,7 @@ JR built a multi-agent coordination system with:
 
 ### Projects Built
 - **Peer/PeerOS**: Where multi-model thinking began. Async agent system.
-- **HerdKit**: B2B platform for pet store operators. Includes Henri (conversational AI for users).
+- **HerdKit**: B2B platform for gathering anonymous stakeholder feedback and AI-synthesizing themes/conflicts. Includes Henri (conversational AI for users).
 - **ChowChow**: Electron app for managing multiple CLI agents. Voice-to-agent with local Whisper transcription.
 - **GoodKeep (formerly BabyBook)**: Family memory-sharing iOS app. Current active project with full agent team.
 - **JROS**: Personal knowledge management.
