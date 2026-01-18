@@ -6,11 +6,12 @@
 **Timeframe:** 2004
 **Location:** Morgantown, WV
 
-- First-generation college grad from a small West Virginia town
-- Marketing degree, zero connections in the industries he'd eventually work in
-- Left with a chip on his shoulder and something to prove
+- Enamored with advertising and marketing from a young age—both grandfathers were entrepreneurs (general store, beer distributorship)
+- Built networks, engaged in dialogue, learned foundations of business practice
+- Loved macro economics and customer behavior. Project work drove me. Always assumed leadership roles.
+- Discovered I didn't want to be an accountant—other than that, wide open
 
-**Thread:** "What's the West Virginia thing about?"
+**Thread:** "Tell me about the entrepreneur grandfathers"
 
 ---
 
