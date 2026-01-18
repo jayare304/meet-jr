@@ -15,26 +15,37 @@
     :root {
       --primary: #1a1a1a;
       --accent: #da7756;
-      --accent-light: #e8937a;
       --light: #faf9f7;
       --muted: #6b7280;
     }
 
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--primary);
+      background: #0a0a12;
       color: white;
       min-height: 100vh;
       overflow: hidden;
     }
 
-    /* Road/Scene */
-    .scene {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      background: linear-gradient(to bottom, #2a2a3a 0%, #1a1a2a 50%, #1a1a1a 100%);
+    /* Windshield view container */
+    .windshield {
+      position: fixed;
+      inset: 0;
+      perspective: 800px;
+      perspective-origin: 50% 70%;
       overflow: hidden;
+    }
+
+    /* Sky gradient */
+    .sky {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        #0a0a15 0%,
+        #1a1a2a 40%,
+        #2a2a3a 60%,
+        #3a3a4a 80%
+      );
     }
 
     /* Stars */
@@ -43,192 +54,228 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 40%;
+      height: 50%;
       background-image:
-        radial-gradient(2px 2px at 20px 30px, white, transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 90px 40px, white, transparent),
-        radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 160px 20px, white, transparent);
-      background-size: 200px 100px;
-      opacity: 0.5;
+        radial-gradient(2px 2px at 100px 50px, white, transparent),
+        radial-gradient(2px 2px at 200px 150px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 300px 100px, white, transparent),
+        radial-gradient(2px 2px at 400px 200px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 500px 80px, white, transparent),
+        radial-gradient(2px 2px at 600px 180px, white, transparent),
+        radial-gradient(1px 1px at 700px 120px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 150px 200px, white, transparent),
+        radial-gradient(1px 1px at 350px 50px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 550px 130px, white, transparent);
+      background-size: 800px 300px;
+      animation: twinkle 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 0.8; }
+    }
+
+    /* Ground/road plane */
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: -100%;
+      right: -100%;
+      height: 55%;
+      background: #1a1a1a;
+      transform: rotateX(60deg);
+      transform-origin: center bottom;
     }
 
     /* Road */
     .road {
       position: absolute;
       bottom: 0;
-      left: 0;
-      right: 0;
-      height: 35%;
-      background: #2a2a2a;
-      perspective: 400px;
-    }
-
-    .road::before {
-      content: '';
-      position: absolute;
-      top: 50%;
       left: 50%;
       transform: translateX(-50%);
+      width: 100%;
+      height: 55%;
+      overflow: hidden;
+    }
+
+    .road-surface {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 300px;
+      height: 200%;
+      background: #2a2a2a;
+      transform: translateX(-50%) rotateX(75deg);
+      transform-origin: center bottom;
+    }
+
+    /* Road lines - center */
+    .road-lines {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
       width: 8px;
-      height: 100%;
+      height: 200%;
+      transform: translateX(-50%) rotateX(75deg);
+      transform-origin: center bottom;
       background: repeating-linear-gradient(
-        to bottom,
+        to top,
         #f5c542 0px,
-        #f5c542 30px,
-        transparent 30px,
-        transparent 60px
+        #f5c542 40px,
+        transparent 40px,
+        transparent 80px
       );
-      animation: roadMove 0.5s linear infinite;
-      opacity: 0.8;
+      animation: linesMove 0.8s linear infinite;
     }
 
-    @keyframes roadMove {
-      from { background-position: 0 0; }
-      to { background-position: 0 60px; }
-    }
-
-    .road.stopped::before {
+    .road-lines.stopped {
       animation-play-state: paused;
     }
 
-    /* Vehicle */
-    .vehicle {
+    @keyframes linesMove {
+      from { background-position: 0 0; }
+      to { background-position: 0 80px; }
+    }
+
+    /* Road edges */
+    .road-edge {
+      position: absolute;
+      bottom: 0;
+      width: 4px;
+      height: 200%;
+      background: #555;
+      transform: rotateX(75deg);
+      transform-origin: center bottom;
+    }
+
+    .road-edge.left {
+      left: calc(50% - 150px);
+    }
+
+    .road-edge.right {
+      left: calc(50% + 150px);
+    }
+
+    /* Billboard container - positioned in 3D space */
+    .billboard-container {
       position: absolute;
       bottom: 25%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 3rem;
-      z-index: 10;
-      transition: transform 0.3s;
+      width: 100%;
+      height: 50%;
+      perspective: 1000px;
+      pointer-events: none;
     }
 
-    .vehicle.driving {
-      animation: vehicleBounce 0.3s ease-in-out infinite;
-    }
-
-    @keyframes vehicleBounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-5px); }
-    }
-
-    /* Location sign */
-    .location-sign {
+    /* Billboard that zooms in from distance */
+    .billboard {
       position: absolute;
-      top: 15%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      opacity: 0;
-      transition: opacity 0.5s;
-    }
-
-    .location-sign.visible {
-      opacity: 1;
-    }
-
-    .location-sign .place {
-      font-size: 0.85rem;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 0.25rem;
-    }
-
-    .location-sign .name {
-      font-size: 2.5rem;
-      font-weight: 800;
-    }
-
-    .location-sign .years {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-top: 0.25rem;
-    }
-
-    /* Bulletin board */
-    .bulletin {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: #f5f0e8;
-      border: 8px solid #8b6914;
-      border-radius: 4px;
-      padding: 2rem;
-      max-width: 500px;
-      width: 90%;
-      color: var(--primary);
+      left: 70%;
+      bottom: 0;
+      width: 500px;
+      transform: translateZ(-2000px) rotateY(-15deg);
+      transform-style: preserve-3d;
+      transition: transform 1.5s ease-out, opacity 0.5s;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.4s ease;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
     }
 
-    .bulletin.visible {
+    .billboard.approaching {
+      transform: translateZ(0px) rotateY(-5deg);
+      opacity: 1;
+    }
+
+    .billboard.visible {
+      transform: translateZ(200px) rotateY(0deg) translateX(-50%);
+      left: 50%;
       opacity: 1;
       pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
     }
 
-    .bulletin::before {
+    .billboard.passed {
+      transform: translateZ(500px) translateX(-200%) rotateY(30deg);
+      opacity: 0;
+    }
+
+    .billboard-frame {
+      background: #f5f0e8;
+      border: 12px solid #5a4a30;
+      border-radius: 4px;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px #3a2a10,
+        0 30px 60px rgba(0,0,0,0.5),
+        inset 0 2px 10px rgba(0,0,0,0.1);
+      color: var(--primary);
+    }
+
+    /* Billboard posts */
+    .billboard-frame::before,
+    .billboard-frame::after {
       content: '';
       position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40px;
-      height: 20px;
-      background: #5a4510;
-      border-radius: 4px 4px 0 0;
+      bottom: -80px;
+      width: 12px;
+      height: 80px;
+      background: linear-gradient(to right, #4a3a20, #6a5a40, #4a3a20);
+      border-radius: 2px;
     }
 
-    .bulletin h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
+    .billboard-frame::before {
+      left: 20%;
+    }
+
+    .billboard-frame::after {
+      right: 20%;
+    }
+
+    .billboard h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
       margin-bottom: 0.25rem;
+      color: var(--primary);
     }
 
-    .bulletin .meta {
-      font-size: 0.85rem;
+    .billboard .meta {
+      font-size: 0.9rem;
       color: var(--muted);
       margin-bottom: 1rem;
       padding-bottom: 1rem;
-      border-bottom: 2px dashed #ddd;
+      border-bottom: 3px solid #e8e4df;
     }
 
-    .bulletin ul {
+    .billboard ul {
       list-style: none;
       margin-bottom: 1.5rem;
     }
 
-    .bulletin li {
+    .billboard li {
       padding: 0.5rem 0;
-      padding-left: 1.25rem;
+      padding-left: 1.5rem;
       position: relative;
-      font-size: 0.95rem;
+      font-size: 1rem;
       line-height: 1.5;
     }
 
-    .bulletin li::before {
+    .billboard li::before {
       content: '→';
       position: absolute;
       left: 0;
       color: var(--accent);
+      font-weight: bold;
     }
 
-    .bulletin-actions {
+    .billboard-actions {
       display: flex;
       gap: 0.75rem;
+      margin-top: 1rem;
     }
 
     .btn {
       flex: 1;
-      padding: 0.875rem 1rem;
+      padding: 1rem 1.25rem;
       border: none;
-      border-radius: 6px;
-      font-size: 0.95rem;
+      border-radius: 8px;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -241,6 +288,7 @@
 
     .btn-primary:hover {
       background: #333;
+      transform: translateY(-2px);
     }
 
     .btn-secondary {
@@ -254,12 +302,52 @@
       color: var(--accent);
     }
 
+    /* Dashboard / speedometer area */
+    .dashboard {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to top, rgba(20,20,20,0.95), transparent);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 1rem;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .drive-prompt {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      pointer-events: auto;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .drive-prompt:hover {
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    .drive-prompt kbd {
+      background: rgba(255,255,255,0.15);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin: 0 0.25rem;
+    }
+
     /* Map button */
     .map-btn {
       position: fixed;
       top: 1.5rem;
       right: 1.5rem;
-      background: rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.5);
       border: 2px solid rgba(255,255,255,0.2);
       color: white;
       padding: 0.75rem 1.25rem;
@@ -272,11 +360,54 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      backdrop-filter: blur(10px);
     }
 
     .map-btn:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.7);
       border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Location indicator */
+    .location-indicator {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .location-indicator .place {
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .location-indicator .name {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    /* Progress bar */
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      z-index: 100;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.5s;
     }
 
     /* Map overlay */
@@ -293,6 +424,7 @@
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
 
     .map-overlay.visible {
@@ -333,12 +465,14 @@
 
     .map-stop.current {
       border-color: var(--accent);
-      background: rgba(218, 119, 86, 0.1);
+      background: rgba(218, 119, 86, 0.15);
     }
 
     .map-stop .stop-num {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 0.25rem;
     }
 
@@ -368,23 +502,6 @@
       background: rgba(255,255,255,0.1);
     }
 
-    /* Progress bar */
-    .progress {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: rgba(255,255,255,0.1);
-      z-index: 50;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.5s;
-    }
-
     /* Entry selector */
     .entry-selector {
       position: fixed;
@@ -405,7 +522,7 @@
     }
 
     .entry-selector h1 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
     }
@@ -450,22 +567,28 @@
       margin-top: 0.25rem;
     }
 
-    /* Keyboard hint */
-    .keyboard-hint {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.8rem;
-      color: var(--muted);
-      z-index: 50;
-    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .billboard {
+        width: 90vw;
+        max-width: 400px;
+      }
 
-    .keyboard-hint kbd {
-      background: rgba(255,255,255,0.1);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      margin: 0 0.25rem;
+      .billboard-frame {
+        padding: 1.25rem;
+      }
+
+      .billboard h2 {
+        font-size: 1.25rem;
+      }
+
+      .billboard li {
+        font-size: 0.9rem;
+      }
+
+      .location-indicator {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -491,39 +614,48 @@
     </div>
   </div>
 
-  <!-- Main Scene -->
-  <div class="scene">
+  <!-- Windshield View -->
+  <div class="windshield" id="windshield">
+    <div class="sky"></div>
     <div class="stars"></div>
-    <div class="road" id="road"></div>
-    <div class="vehicle" id="vehicle">🚗</div>
+    <div class="ground"></div>
 
-    <div class="location-sign" id="locationSign">
-      <div class="place" id="signPlace"></div>
-      <div class="name" id="signName"></div>
-      <div class="years" id="signYears"></div>
+    <div class="road">
+      <div class="road-surface"></div>
+      <div class="road-edge left"></div>
+      <div class="road-edge right"></div>
+      <div class="road-lines stopped" id="roadLines"></div>
     </div>
 
-    <div class="bulletin" id="bulletin">
-      <h2 id="bulletinTitle"></h2>
-      <div class="meta" id="bulletinMeta"></div>
-      <ul id="bulletinList"></ul>
-      <div class="bulletin-actions">
-        <button class="btn btn-secondary" id="btnSkip">Keep driving →</button>
-        <button class="btn btn-primary" id="btnChat">💬 Ask about this</button>
+    <div class="billboard-container">
+      <div class="billboard" id="billboard">
+        <div class="billboard-frame">
+          <h2 id="billboardTitle"></h2>
+          <div class="meta" id="billboardMeta"></div>
+          <ul id="billboardList"></ul>
+          <div class="billboard-actions">
+            <button class="btn btn-secondary" id="btnDrive">Keep driving →</button>
+            <button class="btn btn-primary" id="btnChat">💬 Ask about this</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Map Button -->
-  <button class="map-btn" id="mapBtn">
-    <span>🗺️</span> Map
-  </button>
+  <!-- Location indicator -->
+  <div class="location-indicator" id="locationIndicator">
+    <div class="place" id="locPlace"></div>
+    <div class="name" id="locName"></div>
+  </div>
 
-  <!-- Map Overlay -->
-  <div class="map-overlay" id="mapOverlay">
-    <h2>Jump to a stop</h2>
-    <div class="map-stops" id="mapStops"></div>
-    <button class="map-close" id="mapClose">Close map</button>
+  <!-- Map Button -->
+  <button class="map-btn" id="mapBtn">🗺️ Map</button>
+
+  <!-- Dashboard -->
+  <div class="dashboard">
+    <div class="drive-prompt" id="drivePrompt">
+      Press <kbd>Space</kbd> to drive
+    </div>
   </div>
 
   <!-- Progress -->
@@ -531,8 +663,11 @@
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-  <div class="keyboard-hint">
-    Press <kbd>Space</kbd> or <kbd>→</kbd> to continue
+  <!-- Map Overlay -->
+  <div class="map-overlay" id="mapOverlay">
+    <h2>Jump to a stop</h2>
+    <div class="map-stops" id="mapStops"></div>
+    <button class="map-close" id="mapClose">Close map</button>
   </div>
 
   <script>
@@ -544,7 +679,7 @@
         details: [
           "Both grandfathers were entrepreneurs—one ran a rural general store, the other a beer distributorship",
           "Built networks, engaged in dialogue, learned foundations of business practice",
-          "Loved macro economics and customer behavior. Project work drove me. Always assumed leadership roles.",
+          "Loved macro economics and customer behavior. Project work drove me.",
           "Found accounting interesting, but otherwise wide open"
         ],
         thread: "Tell me about the entrepreneur grandfathers"
@@ -556,7 +691,7 @@
         details: [
           "Door-to-door B2B sales: uniforms, floor mats, paper towels",
           "Body shops behind Shea Stadium in Corona. Kitchens in Lefferts Gardens.",
-          "Taught me fearlessness and business at the ground level—all this a kid from West Virginia"
+          "Taught me fearlessness and business at the ground level"
         ],
         thread: "What did door-to-door teach you?"
       },
@@ -698,22 +833,23 @@
 
     let currentStop = 0;
     let isDriving = false;
-    let bulletinVisible = false;
+    let billboardVisible = false;
 
     const entrySelector = document.getElementById('entrySelector');
-    const road = document.getElementById('road');
-    const vehicle = document.getElementById('vehicle');
-    const locationSign = document.getElementById('locationSign');
-    const bulletin = document.getElementById('bulletin');
+    const roadLines = document.getElementById('roadLines');
+    const billboard = document.getElementById('billboard');
     const mapOverlay = document.getElementById('mapOverlay');
     const mapStops = document.getElementById('mapStops');
     const progressBar = document.getElementById('progressBar');
+    const drivePrompt = document.getElementById('drivePrompt');
+    const locPlace = document.getElementById('locPlace');
+    const locName = document.getElementById('locName');
 
     // Build map
     function buildMap() {
       mapStops.innerHTML = stops.map((stop, i) => `
         <div class="map-stop ${i === currentStop ? 'current' : ''}" data-stop="${i}">
-          <div class="stop-num">Stop ${i + 1}</div>
+          <div class="stop-num">Stop ${i + 1} of ${stops.length}</div>
           <div class="stop-name">${stop.name}</div>
           <div class="stop-years">${stop.years}</div>
         </div>
@@ -726,68 +862,71 @@
       progressBar.style.width = pct + '%';
     }
 
-    // Show location sign
-    function showLocationSign(stop) {
-      document.getElementById('signPlace').textContent = stop.place;
-      document.getElementById('signName').textContent = stop.name;
-      document.getElementById('signYears').textContent = stop.years;
-      locationSign.classList.add('visible');
+    // Update location
+    function updateLocation(stop) {
+      locPlace.textContent = stop.place;
+      locName.textContent = stop.name;
     }
 
-    // Hide location sign
-    function hideLocationSign() {
-      locationSign.classList.remove('visible');
-    }
-
-    // Show bulletin
-    function showBulletin(stop) {
-      document.getElementById('bulletinTitle').textContent = stop.name;
-      document.getElementById('bulletinMeta').textContent = `${stop.place} · ${stop.years}`;
-      document.getElementById('bulletinList').innerHTML = stop.details.map(d => `<li>${d}</li>`).join('');
+    // Show billboard
+    function showBillboard(stop) {
+      document.getElementById('billboardTitle').textContent = stop.name;
+      document.getElementById('billboardMeta').textContent = `${stop.place} · ${stop.years}`;
+      document.getElementById('billboardList').innerHTML = stop.details.map(d => `<li>${d}</li>`).join('');
       document.getElementById('btnChat').textContent = '💬 ' + stop.thread;
-      bulletin.classList.add('visible');
-      bulletinVisible = true;
+
+      // Animate in from distance
+      billboard.classList.remove('passed', 'visible');
+      billboard.classList.add('approaching');
+
+      setTimeout(() => {
+        billboard.classList.remove('approaching');
+        billboard.classList.add('visible');
+        billboardVisible = true;
+        drivePrompt.innerHTML = 'Press <kbd>Space</kbd> to continue';
+      }, 800);
     }
 
-    // Hide bulletin
-    function hideBulletin() {
-      bulletin.classList.remove('visible');
-      bulletinVisible = false;
+    // Hide billboard (drive past it)
+    function hideBillboard() {
+      billboard.classList.remove('visible', 'approaching');
+      billboard.classList.add('passed');
+      billboardVisible = false;
     }
 
     // Drive to stop
     function driveToStop(index) {
       if (isDriving) return;
 
-      hideBulletin();
-      hideLocationSign();
-
+      hideBillboard();
       isDriving = true;
-      vehicle.classList.add('driving');
-      road.classList.remove('stopped');
+      roadLines.classList.remove('stopped');
+      drivePrompt.textContent = 'Driving...';
 
       // Simulate driving
       setTimeout(() => {
         currentStop = index;
         isDriving = false;
-        vehicle.classList.remove('driving');
-        road.classList.add('stopped');
+        roadLines.classList.add('stopped');
 
-        showLocationSign(stops[currentStop]);
+        updateLocation(stops[currentStop]);
         updateProgress();
         buildMap();
 
-        // Show bulletin after a moment
+        // Billboard approaches
         setTimeout(() => {
-          showBulletin(stops[currentStop]);
-        }, 600);
-      }, 1500);
+          showBillboard(stops[currentStop]);
+        }, 300);
+      }, 1800);
     }
 
     // Next stop
     function nextStop() {
       if (currentStop < stops.length - 1) {
         driveToStop(currentStop + 1);
+      } else {
+        // End of journey
+        drivePrompt.textContent = 'End of the road. Thanks for riding along.';
       }
     }
 
@@ -800,15 +939,8 @@
       });
     });
 
-    // Skip button
-    document.getElementById('btnSkip').addEventListener('click', () => {
-      if (currentStop < stops.length - 1) {
-        nextStop();
-      } else {
-        // End of journey
-        alert('End of the road! Thanks for riding along.');
-      }
-    });
+    // Drive button
+    document.getElementById('btnDrive').addEventListener('click', nextStop);
 
     // Chat button (placeholder)
     document.getElementById('btnChat').addEventListener('click', () => {
@@ -837,9 +969,14 @@
       }
     });
 
+    // Drive prompt click
+    drivePrompt.addEventListener('click', () => {
+      if (billboardVisible) nextStop();
+    });
+
     // Keyboard controls
     document.addEventListener('keydown', (e) => {
-      if (entrySelector.classList.contains('hidden') === false) return;
+      if (!entrySelector.classList.contains('hidden')) return;
       if (mapOverlay.classList.contains('visible')) {
         if (e.key === 'Escape') mapOverlay.classList.remove('visible');
         return;
@@ -847,16 +984,13 @@
 
       if (e.key === ' ' || e.key === 'ArrowRight') {
         e.preventDefault();
-        if (bulletinVisible) {
+        if (billboardVisible) {
           nextStop();
         }
       }
       if (e.key === 'm') {
         buildMap();
         mapOverlay.classList.add('visible');
-      }
-      if (e.key === 'Escape') {
-        hideBulletin();
       }
     });
 
