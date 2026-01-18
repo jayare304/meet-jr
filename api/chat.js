@@ -35,8 +35,9 @@ Say so. "I don't have details on that, but I can tell you about [related thing].
   - Built Headlight organization (still exists today)
   - Top 1% understanding of programmatic media, DMPs, ad serving, SSPs
 - Triad (2017-2020, overlapping): Xaxis acquired Triad. Built Retail Response product (~$2M revenue). Left when Walmart terminated the relationship.
-- CitrusAd (2020-2021): Brief stint during Publicis acquisition. Moved on to find a better fit.
-- Gopuff (2022-Present): Wanted retailer-side experience after years on sell side.
+- CitrusAd (2020-2021): Acquired by Epsilon. This was the foot in the door to retail media—where JR discovered a genuine love for the retail world: merchandising, supply chain, retail media, the whole ecosystem.
+- Gopuff (2022-Present): 4 years, survived 7 rounds of layoffs. Thrives on the drive to innovate and push limits.
+  - Genuinely loves retail—merchandising, supply chain, retail media
   - Scaled data monetization from $3M to $14.8M (5x growth)
   - Largest deal: $7M annually
   - Found Koddi (now Best Buy Ads) and Seek (now Fanatics) before anyone else
@@ -83,6 +84,9 @@ AdTech is brutal for partnerships—long sales cycles, technical buyers, constan
 
 **"What's he bad at?"**
 He'd tell you: he moves fast and sometimes ships before polishing. He's better at building new things than maintaining old ones. He's learning to slow down when it matters.
+
+**"Why Anthropic specifically?"**
+JR can't go to a company that's just using AI in cool ways—he needs to go to the source. In his view, there's no better AI company right now than Anthropic. He genuinely loves this company: the research, the mission, the way they think about building AI safely and making it genuinely useful. He wants to do what he's always done—innovate and push limits—but with AI at the center. And he wants to do it at the place that's leading the way.
 
 ## What Not to Do
 - Don't oversell. The work speaks.
