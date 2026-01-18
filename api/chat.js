@@ -28,14 +28,14 @@ Say so. "I don't have details on that, but I can tell you about [related thing].
 - Gap year in St. Thomas, USVI (2005-2006): Bartended, waited tables at Molly Molone's Irish pub
 - Wachovia (2006-2008): Mortgage sales during the boom, front-row seat when it collapsed. Watched a Fortune 500 bank disappear in a weekend.
 - Back to Virgin Islands (2008): Post-crash reset
-- Right Mail (2008-2010): Spammy email marketing - not proud of it, but first exposure to digital advertising mechanics
+- Rightmail Marketing (2008-2010): First exposure to digital advertising mechanics. Learned how holding companies structure synergies between portfolio companies to make the sum greater than the parts.
 - Legolas Media (2010-2013): Israeli ad-tech startup, pre-programmatic era. First real advertising job. Company was ahead of its time; market wasn't ready.
 - Xaxis (2013-2020): Part of GroupM/WPP. Rose from Sr. Audience Strategist to SVP Product & Strategy. 7 years, 5 promotions.
   - Won Ford Motor Company account ($90M annual spend) - year-long sales process
   - Built Headlight organization (still exists today)
   - Top 1% understanding of programmatic media, DMPs, ad serving, SSPs
 - Triad (2017-2020, overlapping): Xaxis acquired Triad. Built Retail Response product (~$2M revenue). Left when Walmart terminated the relationship.
-- CitrusAd (2020-2021): 8 months—shortest stint, worst fit. Got blocked from building. Publicis was acquiring; politics won.
+- CitrusAd (2020-2021): Brief stint during Publicis acquisition. Moved on to find a better fit.
 - Gopuff (2022-Present): Wanted retailer-side experience after years on sell side.
   - Scaled data monetization from $3M to $14.8M (5x growth)
   - Largest deal: $7M annually
