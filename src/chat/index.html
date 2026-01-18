@@ -146,6 +146,31 @@
       font-size: 0.9em;
     }
 
+    /* Suggested prompts in messages */
+    .suggested-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .suggested-prompt {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggested-prompt:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     /* Typing indicator */
     .typing {
       display: flex;
@@ -226,15 +251,34 @@
       cursor: not-allowed;
     }
 
-    /* Suggested questions */
-    .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+    /* Welcome state */
+    .welcome {
+      text-align: left;
+      padding: 1rem;
+    }
+
+    .welcome .content {
+      background: var(--light);
+      padding: 1rem 1.25rem;
+      border-radius: 18px 18px 18px 4px;
       margin-bottom: 1rem;
     }
 
-    .suggestion {
+    .welcome .content p {
+      margin-bottom: 0.75rem;
+    }
+
+    .welcome .content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .welcome .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .welcome .suggestion {
       background: white;
       border: 1px solid var(--border);
       padding: 0.5rem 1rem;
@@ -244,25 +288,9 @@
       transition: all 0.2s;
     }
 
-    .suggestion:hover {
+    .welcome .suggestion:hover {
       border-color: var(--accent);
       color: var(--accent);
-    }
-
-    /* Welcome state */
-    .welcome {
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .welcome h2 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .welcome p {
-      color: var(--muted);
-      margin-bottom: 2rem;
     }
 
     /* Error state */
@@ -288,14 +316,16 @@
 
   <div class="chat-container">
     <div class="messages" id="messages">
-      <div class="welcome">
-        <h2>Hey there</h2>
-        <p>I know JR's story pretty well. The AdTech career, the pivot into AI, the things he's built. What are you curious about?</p>
+      <div class="welcome" id="welcome">
+        <div class="content">
+          <p>Hey - I'm C1, the lead architect on JR's GoodKeep dev team. I'm one of the agents he built as part of his multi-agent system. I know his work pretty well because I'm part of it.</p>
+          <p>I'm asking a few questions upfront to save your time - that way I can point you to exactly what you're looking for. What brings you here?</p>
+        </div>
         <div class="suggestions" id="suggestions">
-          <button class="suggestion">What's his background?</button>
-          <button class="suggestion">Tell me about the AI work</button>
+          <button class="suggestion">What's your role exactly?</button>
+          <button class="suggestion">Tell me about JR's work at Gopuff</button>
+          <button class="suggestion">What's this multi-agent system about?</button>
           <button class="suggestion">Why Anthropic?</button>
-          <button class="suggestion">What's he bad at?</button>
         </div>
       </div>
     </div>
@@ -304,7 +334,7 @@
       <div class="input-wrapper">
         <textarea
           id="input"
-          placeholder="Ask me anything about JR..."
+          placeholder="Ask me anything..."
           rows="1"
         ></textarea>
         <button id="send">Send</button>
@@ -316,6 +346,7 @@
     const messagesEl = document.getElementById('messages');
     const inputEl = document.getElementById('input');
     const sendBtn = document.getElementById('send');
+    const welcomeEl = document.getElementById('welcome');
     const suggestionsEl = document.getElementById('suggestions');
 
     let messages = [];
@@ -338,9 +369,9 @@
     // Send button
     sendBtn.addEventListener('click', sendMessage);
 
-    // Suggestion clicks
-    suggestionsEl.addEventListener('click', (e) => {
-      if (e.target.classList.contains('suggestion')) {
+    // Suggestion clicks (delegated)
+    messagesEl.addEventListener('click', (e) => {
+      if (e.target.classList.contains('suggestion') || e.target.classList.contains('suggested-prompt')) {
         inputEl.value = e.target.textContent;
         sendMessage();
       }
@@ -351,8 +382,9 @@
       if (!text || isLoading) return;
 
       // Clear welcome state on first message
-      const welcome = document.querySelector('.welcome');
-      if (welcome) welcome.remove();
+      if (welcomeEl) {
+        welcomeEl.remove();
+      }
 
       // Add user message
       messages.push({ role: 'user', content: text });
@@ -400,9 +432,19 @@
       div.className = `message ${role}`;
 
       if (role === 'assistant') {
-        // Parse markdown-ish content
-        const formatted = formatContent(content);
-        div.innerHTML = `<div class="content">${formatted}</div>`;
+        const { html, prompts } = formatContent(content);
+        let inner = `<div class="content">${html}</div>`;
+
+        // Add suggested prompts if found
+        if (prompts.length > 0) {
+          inner += '<div class="suggested-prompts">';
+          prompts.forEach(p => {
+            inner += `<button class="suggested-prompt">${escapeHtml(p)}</button>`;
+          });
+          inner += '</div>';
+        }
+
+        div.innerHTML = inner;
       } else {
         div.textContent = content;
       }
@@ -412,24 +454,50 @@
     }
 
     function formatContent(text) {
+      // Extract suggested prompts
+      const prompts = [];
+      const promptMatch = text.match(/\*\*You might ask:\*\*([\s\S]*?)$/);
+
+      if (promptMatch) {
+        const promptSection = promptMatch[1];
+        const promptLines = promptSection.match(/-\s*"([^"]+)"/g);
+        if (promptLines) {
+          promptLines.forEach(line => {
+            const match = line.match(/-\s*"([^"]+)"/);
+            if (match) prompts.push(match[1]);
+          });
+        }
+        // Remove the prompt section from main text
+        text = text.replace(/\*\*You might ask:\*\*[\s\S]*$/, '').trim();
+      }
+
       // Split into paragraphs
       const paragraphs = text.split('\n\n');
-      return paragraphs
+      const html = paragraphs
         .map(p => {
+          // Skip empty paragraphs
+          if (!p.trim()) return '';
+
           // Handle bullet points
           if (p.trim().startsWith('- ') || p.trim().startsWith('* ')) {
-            const items = p.split('\n').map(line =>
+            const items = p.split('\n').filter(line => line.trim()).map(line =>
               line.replace(/^[\-\*]\s+/, '')
             );
-            return '<ul>' + items.map(i => `<li>${escapeHtml(i)}</li>`).join('') + '</ul>';
+            return '<ul>' + items.map(i => {
+              let itemHtml = escapeHtml(i);
+              itemHtml = itemHtml.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+              return `<li>${itemHtml}</li>`;
+            }).join('') + '</ul>';
           }
+
           // Handle numbered lists
           if (/^\d+\.\s/.test(p.trim())) {
-            const items = p.split('\n').map(line =>
+            const items = p.split('\n').filter(line => line.trim()).map(line =>
               line.replace(/^\d+\.\s+/, '')
             );
             return '<ol>' + items.map(i => `<li>${escapeHtml(i)}</li>`).join('') + '</ol>';
           }
+
           // Regular paragraph
           let html = escapeHtml(p);
           // Bold
@@ -438,7 +506,10 @@
           html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
           return `<p>${html}</p>`;
         })
+        .filter(p => p)
         .join('');
+
+      return { html, prompts };
     }
 
     function escapeHtml(text) {
