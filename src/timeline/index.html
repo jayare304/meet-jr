@@ -18,22 +18,379 @@
       --accent-light: #e8937a;
       --light: #faf9f7;
       --muted: #6b7280;
-      --card-bg: #ffffff;
     }
 
     body {
       font-family: 'Inter', -apple-system, sans-serif;
-      background: var(--light);
-      color: var(--primary);
-      overflow-x: hidden;
+      background: var(--primary);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
     }
 
-    /* Entry selector overlay */
+    /* Road/Scene */
+    .scene {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(to bottom, #2a2a3a 0%, #1a1a2a 50%, #1a1a1a 100%);
+      overflow: hidden;
+    }
+
+    /* Stars */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, white, transparent),
+        radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 160px 20px, white, transparent);
+      background-size: 200px 100px;
+      opacity: 0.5;
+    }
+
+    /* Road */
+    .road {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 35%;
+      background: #2a2a2a;
+      perspective: 400px;
+    }
+
+    .road::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        #f5c542 0px,
+        #f5c542 30px,
+        transparent 30px,
+        transparent 60px
+      );
+      animation: roadMove 0.5s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes roadMove {
+      from { background-position: 0 0; }
+      to { background-position: 0 60px; }
+    }
+
+    .road.stopped::before {
+      animation-play-state: paused;
+    }
+
+    /* Vehicle */
+    .vehicle {
+      position: absolute;
+      bottom: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3rem;
+      z-index: 10;
+      transition: transform 0.3s;
+    }
+
+    .vehicle.driving {
+      animation: vehicleBounce 0.3s ease-in-out infinite;
+    }
+
+    @keyframes vehicleBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* Location sign */
+    .location-sign {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .location-sign.visible {
+      opacity: 1;
+    }
+
+    .location-sign .place {
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.25rem;
+    }
+
+    .location-sign .name {
+      font-size: 2.5rem;
+      font-weight: 800;
+    }
+
+    .location-sign .years {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Bulletin board */
+    .bulletin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: #f5f0e8;
+      border: 8px solid #8b6914;
+      border-radius: 4px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      color: var(--primary);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .bulletin.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .bulletin::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 20px;
+      background: #5a4510;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .bulletin h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .bulletin .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px dashed #ddd;
+    }
+
+    .bulletin ul {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .bulletin li {
+      padding: 0.5rem 0;
+      padding-left: 1.25rem;
+      position: relative;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .bulletin li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .bulletin-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.875rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Map button */
+    .map-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .map-btn:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Map overlay */
+    .map-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .map-overlay.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .map-overlay h2 {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: var(--muted);
+    }
+
+    .map-stops {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      max-width: 900px;
+      width: 100%;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .map-stop {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .map-stop:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent);
+    }
+
+    .map-stop.current {
+      border-color: var(--accent);
+      background: rgba(218, 119, 86, 0.1);
+    }
+
+    .map-stop .stop-num {
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .map-stop .stop-name {
+      font-weight: 600;
+      margin-bottom: 0.125rem;
+    }
+
+    .map-stop .stop-years {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .map-close {
+      margin-top: 2rem;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .map-close:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Progress bar */
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      z-index: 50;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.5s;
+    }
+
+    /* Entry selector */
     .entry-selector {
       position: fixed;
       inset: 0;
       background: var(--primary);
-      z-index: 1000;
+      z-index: 300;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -50,11 +407,10 @@
     .entry-selector h1 {
       font-size: 2.5rem;
       font-weight: 800;
-      color: white;
       margin-bottom: 0.5rem;
     }
 
-    .entry-selector p {
+    .entry-selector > p {
       color: var(--muted);
       margin-bottom: 3rem;
       font-size: 1.1rem;
@@ -94,625 +450,419 @@
       margin-top: 0.25rem;
     }
 
-    /* Timeline container */
-    .timeline-container {
-      position: relative;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 4rem 2rem 8rem;
-    }
-
-    /* The path */
-    .path {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: linear-gradient(to bottom, var(--accent), var(--accent-light), var(--accent));
-      transform: translateX(-50%);
-      border-radius: 2px;
-    }
-
-    .path-progress {
-      position: fixed;
-      left: 50%;
-      top: 0;
-      width: 4px;
-      height: 0%;
-      background: var(--primary);
-      transform: translateX(-50%);
-      border-radius: 2px;
-      z-index: 5;
-      max-width: 800px;
-      pointer-events: none;
-    }
-
-    /* The marker */
-    .marker {
-      position: fixed;
-      left: 50%;
-      top: 50%;
-      width: 24px;
-      height: 24px;
-      background: var(--accent);
-      border: 4px solid var(--primary);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      transition: top 0.1s ease-out;
-    }
-
-    /* Stops */
-    .stop {
-      position: relative;
-      padding: 2rem 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 2rem;
-      opacity: 0.4;
-      transition: opacity 0.3s;
-    }
-
-    .stop.active {
-      opacity: 1;
-    }
-
-    .stop:nth-child(odd) {
-      flex-direction: row;
-      padding-right: calc(50% + 2rem);
-      text-align: right;
-    }
-
-    .stop:nth-child(even) {
-      flex-direction: row-reverse;
-      padding-left: calc(50% + 2rem);
-      text-align: left;
-    }
-
-    .stop-marker {
-      position: absolute;
-      left: 50%;
-      top: 2rem;
-      width: 16px;
-      height: 16px;
-      background: var(--light);
-      border: 3px solid var(--accent);
-      border-radius: 50%;
-      transform: translateX(-50%);
-      z-index: 6;
-      transition: all 0.3s;
-    }
-
-    .stop.active .stop-marker {
-      background: var(--accent);
-      transform: translateX(-50%) scale(1.2);
-    }
-
-    .stop-content {
-      flex: 1;
-    }
-
-    .stop-location {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 0.25rem;
-    }
-
-    .stop-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .stop-years {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
-    .stop-details {
-      display: none;
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-top: 1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    }
-
-    .stop.active .stop-details {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .stop-details ul {
-      list-style: none;
-      margin-bottom: 1rem;
-    }
-
-    .stop-details li {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-
-    .stop-details li:last-child {
-      border-bottom: none;
-    }
-
-    .thread-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .thread-btn:hover {
-      background: #333;
-    }
-
-    /* Back to top */
-    .back-top {
+    /* Keyboard hint */
+    .keyboard-hint {
       position: fixed;
       bottom: 2rem;
-      right: 2rem;
-      background: var(--primary);
-      color: white;
-      border: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      font-size: 1.25rem;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 100;
-    }
-
-    .back-top.visible {
-      opacity: 1;
-    }
-
-    /* Era labels */
-    .era-label {
-      text-align: center;
-      padding: 3rem 0 1rem;
-      position: relative;
-    }
-
-    .era-label h2 {
-      display: inline-block;
-      background: var(--light);
-      padding: 0.5rem 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
       color: var(--muted);
+      z-index: 50;
     }
 
-    /* Responsive */
-    @media (max-width: 700px) {
-      .timeline-container {
-        padding: 3rem 1rem 6rem;
-      }
-
-      .path {
-        left: 1.5rem;
-      }
-
-      .marker {
-        left: 1.5rem;
-      }
-
-      .stop {
-        padding: 1.5rem 0 1.5rem 3rem !important;
-        flex-direction: row !important;
-        text-align: left !important;
-      }
-
-      .stop-marker {
-        left: 1.5rem;
-      }
-
-      .stop-title {
-        font-size: 1.25rem;
-      }
+    .keyboard-hint kbd {
+      background: rgba(255,255,255,0.1);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin: 0 0.25rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- Entry Point Selector -->
+  <!-- Entry Selector -->
   <div class="entry-selector" id="entrySelector">
     <h1>JR Crosby</h1>
     <p>Where do you want to start?</p>
     <div class="entry-options">
-      <button class="entry-btn" data-target="stop-1">
+      <button class="entry-btn" data-start="0">
         The whole story
         <span>Start from West Virginia, 2004</span>
       </button>
-      <button class="entry-btn" data-target="stop-7">
+      <button class="entry-btn" data-start="6">
         The career stuff
         <span>Start at Legolas Media, NYC</span>
       </button>
-      <button class="entry-btn" data-target="stop-12">
+      <button class="entry-btn" data-start="11">
         The AI work
         <span>Start at the pivot, April 2025</span>
       </button>
     </div>
   </div>
 
-  <!-- Timeline -->
-  <div class="timeline-container">
-    <div class="path"></div>
-    <div class="marker" id="marker"></div>
+  <!-- Main Scene -->
+  <div class="scene">
+    <div class="stars"></div>
+    <div class="road" id="road"></div>
+    <div class="vehicle" id="vehicle">🚗</div>
 
-    <!-- Era: The Foundation -->
-    <div class="era-label">
-      <h2>The Foundation</h2>
+    <div class="location-sign" id="locationSign">
+      <div class="place" id="signPlace"></div>
+      <div class="name" id="signName"></div>
+      <div class="years" id="signYears"></div>
     </div>
 
-    <!-- Stop 1: WVU -->
-    <div class="stop" id="stop-1" data-stop="1">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">Morgantown, WV</div>
-        <div class="stop-title">WVU</div>
-        <div class="stop-years">2004</div>
-        <div class="stop-details">
-          <ul>
-            <li>Both grandfathers were entrepreneurs—one ran a rural general store, the other a beer distributorship</li>
-            <li>Built networks, engaged in dialogue, learned foundations of business practice</li>
-            <li>Loved macro economics and customer behavior. Project work drove me. Always assumed leadership roles.</li>
-            <li>Found accounting interesting, but otherwise wide open</li>
-          </ul>
-          <button class="thread-btn">💬 Tell me about the entrepreneur grandfathers</button>
-        </div>
+    <div class="bulletin" id="bulletin">
+      <h2 id="bulletinTitle"></h2>
+      <div class="meta" id="bulletinMeta"></div>
+      <ul id="bulletinList"></ul>
+      <div class="bulletin-actions">
+        <button class="btn btn-secondary" id="btnSkip">Keep driving →</button>
+        <button class="btn btn-primary" id="btnChat">💬 Ask about this</button>
       </div>
     </div>
-
-    <!-- Stop 2: Cintas -->
-    <div class="stop" id="stop-2" data-stop="2">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">Queens, NYC</div>
-        <div class="stop-title">Cintas</div>
-        <div class="stop-years">2004–2005</div>
-        <div class="stop-details">
-          <ul>
-            <li>Door-to-door B2B sales: uniforms, floor mats, paper towels</li>
-            <li>Body shops behind Shea Stadium in Corona. Kitchens in Lefferts Gardens.</li>
-            <li>Taught me fearlessness and business at the ground level—all this a kid from West Virginia</li>
-          </ul>
-          <button class="thread-btn">💬 What did door-to-door teach you?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 3: St. Thomas Gap Year -->
-    <div class="stop" id="stop-3" data-stop="3">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">St. Thomas, USVI</div>
-        <div class="stop-title">The Gap Year</div>
-        <div class="stop-years">2005–2006</div>
-        <div class="stop-details">
-          <ul>
-            <li>Left Cintas, headed to the islands</li>
-            <li>Bartended at a beach/pool bar, waited tables at Molly Molone's Irish pub</li>
-            <li>A year to figure out what was next</li>
-          </ul>
-          <button class="thread-btn">💬 Why take a gap year?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 4: Wachovia -->
-    <div class="stop" id="stop-4" data-stop="4">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">Charlotte, NC</div>
-        <div class="stop-title">Wachovia</div>
-        <div class="stop-years">2006–2008</div>
-        <div class="stop-details">
-          <ul>
-            <li>Mortgage sales during the boom—everyone was buying, everyone was lending</li>
-            <li>Had a front-row seat when it all collapsed in 2008</li>
-            <li>Watched a Fortune 500 bank disappear in a weekend</li>
-          </ul>
-          <button class="thread-btn">💬 What was it like inside during the crash?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 5: Virgin Islands Return -->
-    <div class="stop" id="stop-5" data-stop="5">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">St. Thomas, USVI</div>
-        <div class="stop-title">Back to the Islands</div>
-        <div class="stop-years">2008</div>
-        <div class="stop-details">
-          <ul>
-            <li>Post-crash reset—took time to figure out what was next</li>
-            <li>Cleared my head, avoided the recession panic</li>
-            <li>Sometimes you have to leave to see clearly</li>
-          </ul>
-          <button class="thread-btn">💬 Why go back?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 6: Right Mail -->
-    <div class="stop" id="stop-6" data-stop="6">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">St. Thomas, USVI</div>
-        <div class="stop-title">Right Mail</div>
-        <div class="stop-years">2008–2010</div>
-        <div class="stop-details">
-          <ul>
-            <li>Spammy email marketing company—not proud of it</li>
-            <li>But: first exposure to digital advertising mechanics</li>
-            <li>Learned how targeting, delivery, and optimization actually worked</li>
-          </ul>
-          <button class="thread-btn">💬 What do you mean 'spammy'?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Era: The Climb -->
-    <div class="era-label">
-      <h2>The Climb</h2>
-    </div>
-
-    <!-- Stop 7: Legolas -->
-    <div class="stop" id="stop-7" data-stop="7">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">New York, NY</div>
-        <div class="stop-title">Legolas Media</div>
-        <div class="stop-years">2010–2013</div>
-        <div class="stop-details">
-          <ul>
-            <li>Israeli ad-tech startup, pre-programmatic era</li>
-            <li>First real advertising job—fell in love with data and targeting</li>
-            <li>Company was ahead of its time; market wasn't ready yet</li>
-          </ul>
-          <button class="thread-btn">💬 What made you fall for ad tech?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 8: Xaxis -->
-    <div class="stop" id="stop-8" data-stop="8">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">New York, NY</div>
-        <div class="stop-title">Xaxis (The Climb)</div>
-        <div class="stop-years">2013–2020</div>
-        <div class="stop-details">
-          <ul>
-            <li>Joined as Sr. Strategist, left as SVP—7 years, 5 promotions</li>
-            <li>Won Ford Motor Company account ($90M annual spend)</li>
-            <li>Built Headlight, a media product still running today</li>
-            <li>Top 1% in programmatic advertising globally</li>
-          </ul>
-          <button class="thread-btn">💬 Tell me about the Ford win</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 9: Triad -->
-    <div class="stop" id="stop-9" data-stop="9">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">Florida / New York</div>
-        <div class="stop-title">Triad Retail Media</div>
-        <div class="stop-years">2017–2020</div>
-        <div class="stop-details">
-          <ul>
-            <li>Xaxis acquired Triad; JR helped integrate and scale</li>
-            <li>Built Retail Response product line (~$2M incremental revenue)</li>
-            <li>Left when Walmart terminated the relationship</li>
-          </ul>
-          <button class="thread-btn">💬 What happened with Walmart?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 10: CitrusAd -->
-    <div class="stop" id="stop-10" data-stop="10">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">Remote</div>
-        <div class="stop-title">CitrusAd</div>
-        <div class="stop-years">2020–2021</div>
-        <div class="stop-details">
-          <ul>
-            <li>8 months—shortest stint, worst fit</li>
-            <li>Got blocked from doing the job he was hired for</li>
-            <li>Publicis was acquiring; politics won, he left</li>
-          </ul>
-          <button class="thread-btn">💬 What went wrong?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 11: Gopuff -->
-    <div class="stop" id="stop-11" data-stop="11">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">NYC Metro</div>
-        <div class="stop-title">Gopuff</div>
-        <div class="stop-years">2022–Present</div>
-        <div class="stop-details">
-          <ul>
-            <li>Wanted retailer-side experience after years on the sell side</li>
-            <li>Scaled Gopuff Ads data revenue from $3M to $14.8M in two years</li>
-            <li>Found Koddi (now Best Buy Ads) and Seek (now Fanatics) before anyone else</li>
-          </ul>
-          <button class="thread-btn">💬 How'd you spot Koddi and Seek early?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Era: The Pivot -->
-    <div class="era-label">
-      <h2>The Pivot</h2>
-    </div>
-
-    <!-- Stop 12: The Pivot -->
-    <div class="stop" id="stop-12" data-stop="12">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">—</div>
-        <div class="stop-title">The Pivot</div>
-        <div class="stop-years">April 2025</div>
-        <div class="stop-details">
-          <ul>
-            <li>Realized he was more energized building than selling</li>
-            <li>Started dedicating 40 hrs/week to AI development alongside day job</li>
-            <li>Not a career break—a deliberate second track</li>
-          </ul>
-          <button class="thread-btn">💬 Why make the switch?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 13: Building -->
-    <div class="stop" id="stop-13" data-stop="13">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">—</div>
-        <div class="stop-title">Building</div>
-        <div class="stop-years">2025–Present</div>
-        <div class="stop-details">
-          <ul>
-            <li>1,700+ hours of hands-on AI/agent development in 10 months</li>
-            <li>Created Triad Protocol for multi-agent coordination</li>
-            <li>Shipped: ChowChow, GoodKeep, HerdKit, Peer, JROS, 14+ custom agents</li>
-            <li>Built systems, not just prompts</li>
-          </ul>
-          <button class="thread-btn">💬 What's the Triad Protocol?</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stop 14: Now -->
-    <div class="stop" id="stop-14" data-stop="14">
-      <div class="stop-marker"></div>
-      <div class="stop-content">
-        <div class="stop-location">—</div>
-        <div class="stop-title">Now</div>
-        <div class="stop-years">January 2026</div>
-        <div class="stop-details">
-          <ul>
-            <li>This site is the demo—built with Claude, not just about Claude</li>
-            <li>Applying to Anthropic because the mission matches the obsession</li>
-            <li>Wants to help others build what he's been building alone</li>
-          </ul>
-          <button class="thread-btn">💬 Why Anthropic?</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <button class="back-top" id="backTop">↑</button>
+  <!-- Map Button -->
+  <button class="map-btn" id="mapBtn">
+    <span>🗺️</span> Map
+  </button>
+
+  <!-- Map Overlay -->
+  <div class="map-overlay" id="mapOverlay">
+    <h2>Jump to a stop</h2>
+    <div class="map-stops" id="mapStops"></div>
+    <button class="map-close" id="mapClose">Close map</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="keyboard-hint">
+    Press <kbd>Space</kbd> or <kbd>→</kbd> to continue
+  </div>
 
   <script>
-    // Entry selector
+    const stops = [
+      {
+        name: "WVU",
+        place: "Morgantown, WV",
+        years: "2004",
+        details: [
+          "Both grandfathers were entrepreneurs—one ran a rural general store, the other a beer distributorship",
+          "Built networks, engaged in dialogue, learned foundations of business practice",
+          "Loved macro economics and customer behavior. Project work drove me. Always assumed leadership roles.",
+          "Found accounting interesting, but otherwise wide open"
+        ],
+        thread: "Tell me about the entrepreneur grandfathers"
+      },
+      {
+        name: "Cintas",
+        place: "Queens, NYC",
+        years: "2004–2005",
+        details: [
+          "Door-to-door B2B sales: uniforms, floor mats, paper towels",
+          "Body shops behind Shea Stadium in Corona. Kitchens in Lefferts Gardens.",
+          "Taught me fearlessness and business at the ground level—all this a kid from West Virginia"
+        ],
+        thread: "What did door-to-door teach you?"
+      },
+      {
+        name: "The Gap Year",
+        place: "St. Thomas, USVI",
+        years: "2005–2006",
+        details: [
+          "Left Cintas, headed to the islands",
+          "Bartended at a beach/pool bar, waited tables at Molly Molone's Irish pub",
+          "A year to figure out what was next"
+        ],
+        thread: "Why take a gap year?"
+      },
+      {
+        name: "Wachovia",
+        place: "Charlotte, NC",
+        years: "2006–2008",
+        details: [
+          "Mortgage sales during the boom—everyone was buying, everyone was lending",
+          "Had a front-row seat when it all collapsed in 2008",
+          "Watched a Fortune 500 bank disappear in a weekend"
+        ],
+        thread: "What was it like inside during the crash?"
+      },
+      {
+        name: "Back to the Islands",
+        place: "St. Thomas, USVI",
+        years: "2008",
+        details: [
+          "Post-crash reset—took time to figure out what was next",
+          "Cleared my head, avoided the recession panic",
+          "Sometimes you have to leave to see clearly"
+        ],
+        thread: "Why go back?"
+      },
+      {
+        name: "Right Mail",
+        place: "St. Thomas, USVI",
+        years: "2008–2010",
+        details: [
+          "Spammy email marketing company—not proud of it",
+          "But: first exposure to digital advertising mechanics",
+          "Learned how targeting, delivery, and optimization actually worked"
+        ],
+        thread: "What do you mean 'spammy'?"
+      },
+      {
+        name: "Legolas Media",
+        place: "New York, NY",
+        years: "2010–2013",
+        details: [
+          "Israeli ad-tech startup, pre-programmatic era",
+          "First real advertising job—fell in love with data and targeting",
+          "Company was ahead of its time; market wasn't ready yet"
+        ],
+        thread: "What made you fall for ad tech?"
+      },
+      {
+        name: "Xaxis",
+        place: "New York, NY",
+        years: "2013–2020",
+        details: [
+          "Joined as Sr. Strategist, left as SVP—7 years, 5 promotions",
+          "Won Ford Motor Company account ($90M annual spend)",
+          "Built Headlight, a media product still running today",
+          "Top 1% in programmatic advertising globally"
+        ],
+        thread: "Tell me about the Ford win"
+      },
+      {
+        name: "Triad Retail Media",
+        place: "Florida / New York",
+        years: "2017–2020",
+        details: [
+          "Xaxis acquired Triad; helped integrate and scale",
+          "Built Retail Response product line (~$2M incremental revenue)",
+          "Left when Walmart terminated the relationship"
+        ],
+        thread: "What happened with Walmart?"
+      },
+      {
+        name: "CitrusAd",
+        place: "Remote",
+        years: "2020–2021",
+        details: [
+          "8 months—shortest stint, worst fit",
+          "Got blocked from doing the job I was hired for",
+          "Publicis was acquiring; politics won, I left"
+        ],
+        thread: "What went wrong?"
+      },
+      {
+        name: "Gopuff",
+        place: "NYC Metro",
+        years: "2022–Present",
+        details: [
+          "Wanted retailer-side experience after years on the sell side",
+          "Scaled Gopuff Ads data revenue from $3M to $14.8M in two years",
+          "Found Koddi (now Best Buy Ads) and Seek (now Fanatics) before anyone else"
+        ],
+        thread: "How'd you spot Koddi and Seek early?"
+      },
+      {
+        name: "The Pivot",
+        place: "—",
+        years: "April 2025",
+        details: [
+          "Realized I was more energized building than selling",
+          "Started dedicating 40 hrs/week to AI development alongside day job",
+          "Not a career break—a deliberate second track"
+        ],
+        thread: "Why make the switch?"
+      },
+      {
+        name: "Building",
+        place: "—",
+        years: "2025–Present",
+        details: [
+          "1,700+ hours of hands-on AI/agent development in 10 months",
+          "Created Triad Protocol for multi-agent coordination",
+          "Shipped: ChowChow, GoodKeep, HerdKit, Peer, JROS, 14+ custom agents",
+          "Built systems, not just prompts"
+        ],
+        thread: "What's the Triad Protocol?"
+      },
+      {
+        name: "Now",
+        place: "—",
+        years: "January 2026",
+        details: [
+          "This site is the demo—built with Claude, not just about Claude",
+          "Applying to Anthropic because the mission matches the obsession",
+          "Want to help others build what I've been building alone"
+        ],
+        thread: "Why Anthropic?"
+      }
+    ];
+
+    let currentStop = 0;
+    let isDriving = false;
+    let bulletinVisible = false;
+
     const entrySelector = document.getElementById('entrySelector');
-    const entryBtns = document.querySelectorAll('.entry-btn');
+    const road = document.getElementById('road');
+    const vehicle = document.getElementById('vehicle');
+    const locationSign = document.getElementById('locationSign');
+    const bulletin = document.getElementById('bulletin');
+    const mapOverlay = document.getElementById('mapOverlay');
+    const mapStops = document.getElementById('mapStops');
+    const progressBar = document.getElementById('progressBar');
 
-    entryBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.target;
-        entrySelector.classList.add('hidden');
+    // Build map
+    function buildMap() {
+      mapStops.innerHTML = stops.map((stop, i) => `
+        <div class="map-stop ${i === currentStop ? 'current' : ''}" data-stop="${i}">
+          <div class="stop-num">Stop ${i + 1}</div>
+          <div class="stop-name">${stop.name}</div>
+          <div class="stop-years">${stop.years}</div>
+        </div>
+      `).join('');
+    }
 
+    // Update progress
+    function updateProgress() {
+      const pct = ((currentStop + 1) / stops.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    // Show location sign
+    function showLocationSign(stop) {
+      document.getElementById('signPlace').textContent = stop.place;
+      document.getElementById('signName').textContent = stop.name;
+      document.getElementById('signYears').textContent = stop.years;
+      locationSign.classList.add('visible');
+    }
+
+    // Hide location sign
+    function hideLocationSign() {
+      locationSign.classList.remove('visible');
+    }
+
+    // Show bulletin
+    function showBulletin(stop) {
+      document.getElementById('bulletinTitle').textContent = stop.name;
+      document.getElementById('bulletinMeta').textContent = `${stop.place} · ${stop.years}`;
+      document.getElementById('bulletinList').innerHTML = stop.details.map(d => `<li>${d}</li>`).join('');
+      document.getElementById('btnChat').textContent = '💬 ' + stop.thread;
+      bulletin.classList.add('visible');
+      bulletinVisible = true;
+    }
+
+    // Hide bulletin
+    function hideBulletin() {
+      bulletin.classList.remove('visible');
+      bulletinVisible = false;
+    }
+
+    // Drive to stop
+    function driveToStop(index) {
+      if (isDriving) return;
+
+      hideBulletin();
+      hideLocationSign();
+
+      isDriving = true;
+      vehicle.classList.add('driving');
+      road.classList.remove('stopped');
+
+      // Simulate driving
+      setTimeout(() => {
+        currentStop = index;
+        isDriving = false;
+        vehicle.classList.remove('driving');
+        road.classList.add('stopped');
+
+        showLocationSign(stops[currentStop]);
+        updateProgress();
+        buildMap();
+
+        // Show bulletin after a moment
         setTimeout(() => {
-          const el = document.getElementById(target);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }, 300);
-      });
-    });
+          showBulletin(stops[currentStop]);
+        }, 600);
+      }, 1500);
+    }
 
-    // Scroll tracking
-    const stops = document.querySelectorAll('.stop');
-    const marker = document.getElementById('marker');
-    const backTop = document.getElementById('backTop');
-
-    function updateActiveStop() {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const viewportCenter = scrollY + windowHeight / 2;
-
-      let closestStop = null;
-      let closestDistance = Infinity;
-
-      stops.forEach(stop => {
-        const rect = stop.getBoundingClientRect();
-        const stopCenter = scrollY + rect.top + rect.height / 2;
-        const distance = Math.abs(viewportCenter - stopCenter);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestStop = stop;
-        }
-
-        // Activate stops that are in view
-        if (rect.top < windowHeight * 0.7 && rect.bottom > windowHeight * 0.3) {
-          stop.classList.add('active');
-        } else {
-          stop.classList.remove('active');
-        }
-      });
-
-      // Back to top button
-      if (scrollY > 500) {
-        backTop.classList.add('visible');
-      } else {
-        backTop.classList.remove('visible');
+    // Next stop
+    function nextStop() {
+      if (currentStop < stops.length - 1) {
+        driveToStop(currentStop + 1);
       }
     }
 
-    window.addEventListener('scroll', updateActiveStop);
-    updateActiveStop();
-
-    backTop.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    // Thread buttons (placeholder for chat integration)
-    document.querySelectorAll('.thread-btn').forEach(btn => {
+    // Entry buttons
+    document.querySelectorAll('.entry-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const question = btn.textContent.replace('💬 ', '');
-        // TODO: Open chat with this question
-        alert('Chat coming soon!\n\nQuestion: ' + question);
+        const start = parseInt(btn.dataset.start);
+        entrySelector.classList.add('hidden');
+        setTimeout(() => driveToStop(start), 300);
       });
     });
+
+    // Skip button
+    document.getElementById('btnSkip').addEventListener('click', () => {
+      if (currentStop < stops.length - 1) {
+        nextStop();
+      } else {
+        // End of journey
+        alert('End of the road! Thanks for riding along.');
+      }
+    });
+
+    // Chat button (placeholder)
+    document.getElementById('btnChat').addEventListener('click', () => {
+      const stop = stops[currentStop];
+      alert('Chat coming soon!\n\nQuestion: ' + stop.thread);
+    });
+
+    // Map button
+    document.getElementById('mapBtn').addEventListener('click', () => {
+      buildMap();
+      mapOverlay.classList.add('visible');
+    });
+
+    // Map close
+    document.getElementById('mapClose').addEventListener('click', () => {
+      mapOverlay.classList.remove('visible');
+    });
+
+    // Map stop click
+    mapStops.addEventListener('click', (e) => {
+      const stopEl = e.target.closest('.map-stop');
+      if (stopEl) {
+        const index = parseInt(stopEl.dataset.stop);
+        mapOverlay.classList.remove('visible');
+        driveToStop(index);
+      }
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (entrySelector.classList.contains('hidden') === false) return;
+      if (mapOverlay.classList.contains('visible')) {
+        if (e.key === 'Escape') mapOverlay.classList.remove('visible');
+        return;
+      }
+
+      if (e.key === ' ' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (bulletinVisible) {
+          nextStop();
+        }
+      }
+      if (e.key === 'm') {
+        buildMap();
+        mapOverlay.classList.add('visible');
+      }
+      if (e.key === 'Escape') {
+        hideBulletin();
+      }
+    });
+
+    // Initialize
+    buildMap();
+    updateProgress();
   </script>
 
 </body>
