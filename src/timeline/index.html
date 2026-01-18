@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JR Crosby - The Journey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a1a1a;
+      --accent: #da7756;
+      --accent-light: #e8937a;
+      --light: #faf9f7;
+      --muted: #6b7280;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--light);
+      color: var(--primary);
+      overflow-x: hidden;
+    }
+
+    /* Entry selector overlay */
+    .entry-selector {
+      position: fixed;
+      inset: 0;
+      background: var(--primary);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      transition: opacity 0.5s, visibility 0.5s;
+    }
+
+    .entry-selector.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .entry-selector h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .entry-selector p {
+      color: var(--muted);
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+
+    .entry-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .entry-btn {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .entry-btn:hover {
+      border-color: var(--accent);
+      background: rgba(218, 119, 86, 0.1);
+    }
+
+    .entry-btn span {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Timeline container */
+    .timeline-container {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 2rem 8rem;
+    }
+
+    /* The path */
+    .path {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent-light), var(--accent));
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+
+    .path-progress {
+      position: fixed;
+      left: 50%;
+      top: 0;
+      width: 4px;
+      height: 0%;
+      background: var(--primary);
+      transform: translateX(-50%);
+      border-radius: 2px;
+      z-index: 5;
+      max-width: 800px;
+      pointer-events: none;
+    }
+
+    /* The marker */
+    .marker {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border: 4px solid var(--primary);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: top 0.1s ease-out;
+    }
+
+    /* Stops */
+    .stop {
+      position: relative;
+      padding: 2rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      opacity: 0.4;
+      transition: opacity 0.3s;
+    }
+
+    .stop.active {
+      opacity: 1;
+    }
+
+    .stop:nth-child(odd) {
+      flex-direction: row;
+      padding-right: calc(50% + 2rem);
+      text-align: right;
+    }
+
+    .stop:nth-child(even) {
+      flex-direction: row-reverse;
+      padding-left: calc(50% + 2rem);
+      text-align: left;
+    }
+
+    .stop-marker {
+      position: absolute;
+      left: 50%;
+      top: 2rem;
+      width: 16px;
+      height: 16px;
+      background: var(--light);
+      border: 3px solid var(--accent);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      z-index: 6;
+      transition: all 0.3s;
+    }
+
+    .stop.active .stop-marker {
+      background: var(--accent);
+      transform: translateX(-50%) scale(1.2);
+    }
+
+    .stop-content {
+      flex: 1;
+    }
+
+    .stop-location {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.25rem;
+    }
+
+    .stop-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stop-years {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .stop-details {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .stop.active .stop-details {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stop-details ul {
+      list-style: none;
+      margin-bottom: 1rem;
+    }
+
+    .stop-details li {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stop-details li:last-child {
+      border-bottom: none;
+    }
+
+    .thread-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .thread-btn:hover {
+      background: #333;
+    }
+
+    /* Back to top */
+    .back-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+
+    .back-top.visible {
+      opacity: 1;
+    }
+
+    /* Era labels */
+    .era-label {
+      text-align: center;
+      padding: 3rem 0 1rem;
+      position: relative;
+    }
+
+    .era-label h2 {
+      display: inline-block;
+      background: var(--light);
+      padding: 0.5rem 1.5rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .timeline-container {
+        padding: 3rem 1rem 6rem;
+      }
+
+      .path {
+        left: 1.5rem;
+      }
+
+      .marker {
+        left: 1.5rem;
+      }
+
+      .stop {
+        padding: 1.5rem 0 1.5rem 3rem !important;
+        flex-direction: row !important;
+        text-align: left !important;
+      }
+
+      .stop-marker {
+        left: 1.5rem;
+      }
+
+      .stop-title {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Entry Point Selector -->
+  <div class="entry-selector" id="entrySelector">
+    <h1>JR Crosby</h1>
+    <p>Where do you want to start?</p>
+    <div class="entry-options">
+      <button class="entry-btn" data-target="stop-1">
+        The whole story
+        <span>Start from West Virginia, 2004</span>
+      </button>
+      <button class="entry-btn" data-target="stop-6">
+        The career stuff
+        <span>Start at Legolas Media, NYC</span>
+      </button>
+      <button class="entry-btn" data-target="stop-11">
+        The AI work
+        <span>Start at the pivot, April 2025</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-container">
+    <div class="path"></div>
+    <div class="marker" id="marker"></div>
+
+    <!-- Era: The Foundation -->
+    <div class="era-label">
+      <h2>The Foundation</h2>
+    </div>
+
+    <!-- Stop 1: WVU -->
+    <div class="stop" id="stop-1" data-stop="1">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">Morgantown, WV</div>
+        <div class="stop-title">WVU</div>
+        <div class="stop-years">2004</div>
+        <div class="stop-details">
+          <ul>
+            <li>First-generation college grad from a small West Virginia town</li>
+            <li>Marketing degree, zero connections in the industries he'd eventually work in</li>
+            <li>Left with a chip on his shoulder and something to prove</li>
+          </ul>
+          <button class="thread-btn">💬 What's the West Virginia thing about?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 2: Cintas -->
+    <div class="stop" id="stop-2" data-stop="2">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">Queens → Upper West Side, Manhattan</div>
+        <div class="stop-title">Cintas</div>
+        <div class="stop-years">2004–2006</div>
+        <div class="stop-details">
+          <ul>
+            <li>Door-to-door B2B sales: uniforms, floor mats, paper towels</li>
+            <li>Cold-called 60+ businesses a day in NYC boroughs</li>
+            <li>Learned that sales is just solving problems for people who don't know they have them yet</li>
+          </ul>
+          <button class="thread-btn">💬 How does door-to-door connect to anything?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 3: Wachovia -->
+    <div class="stop" id="stop-3" data-stop="3">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">Charlotte, NC</div>
+        <div class="stop-title">Wachovia</div>
+        <div class="stop-years">2006–2008</div>
+        <div class="stop-details">
+          <ul>
+            <li>Mortgage sales during the boom—everyone was buying, everyone was lending</li>
+            <li>Had a front-row seat when it all collapsed in 2008</li>
+            <li>Watched a Fortune 500 bank disappear in a weekend</li>
+          </ul>
+          <button class="thread-btn">💬 What was it like inside during the crash?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 4: Virgin Islands -->
+    <div class="stop" id="stop-4" data-stop="4">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">St. Thomas, USVI</div>
+        <div class="stop-title">Virgin Islands</div>
+        <div class="stop-years">2008</div>
+        <div class="stop-details">
+          <ul>
+            <li>Post-crash reset—took time to figure out what was next</li>
+            <li>Bartended, cleared his head, avoided the recession panic</li>
+            <li>Sometimes you have to leave to see clearly</li>
+          </ul>
+          <button class="thread-btn">💬 Why the islands?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 5: Right Mail -->
+    <div class="stop" id="stop-5" data-stop="5">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">St. Thomas, USVI</div>
+        <div class="stop-title">Right Mail</div>
+        <div class="stop-years">2008–2010</div>
+        <div class="stop-details">
+          <ul>
+            <li>Spammy email marketing company—not proud of it</li>
+            <li>But: first exposure to digital advertising mechanics</li>
+            <li>Learned how targeting, delivery, and optimization actually worked</li>
+          </ul>
+          <button class="thread-btn">💬 What do you mean 'spammy'?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era: The Climb -->
+    <div class="era-label">
+      <h2>The Climb</h2>
+    </div>
+
+    <!-- Stop 6: Legolas -->
+    <div class="stop" id="stop-6" data-stop="6">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">New York, NY</div>
+        <div class="stop-title">Legolas Media</div>
+        <div class="stop-years">2010–2013</div>
+        <div class="stop-details">
+          <ul>
+            <li>Israeli ad-tech startup, pre-programmatic era</li>
+            <li>First real advertising job—fell in love with data and targeting</li>
+            <li>Company was ahead of its time; market wasn't ready yet</li>
+          </ul>
+          <button class="thread-btn">💬 What made you fall for ad tech?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 7: Xaxis -->
+    <div class="stop" id="stop-7" data-stop="7">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">New York, NY</div>
+        <div class="stop-title">Xaxis (The Climb)</div>
+        <div class="stop-years">2013–2020</div>
+        <div class="stop-details">
+          <ul>
+            <li>Joined as Sr. Strategist, left as SVP—7 years, 5 promotions</li>
+            <li>Won Ford Motor Company account ($90M annual spend)</li>
+            <li>Built Headlight, a media product still running today</li>
+            <li>Top 1% in programmatic advertising globally</li>
+          </ul>
+          <button class="thread-btn">💬 Tell me about the Ford win</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 8: Triad -->
+    <div class="stop" id="stop-8" data-stop="8">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">Florida / New York</div>
+        <div class="stop-title">Triad Retail Media</div>
+        <div class="stop-years">2017–2020</div>
+        <div class="stop-details">
+          <ul>
+            <li>Xaxis acquired Triad; JR helped integrate and scale</li>
+            <li>Built Retail Response product line (~$2M incremental revenue)</li>
+            <li>Left when Walmart terminated the relationship</li>
+          </ul>
+          <button class="thread-btn">💬 What happened with Walmart?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 9: CitrusAd -->
+    <div class="stop" id="stop-9" data-stop="9">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">Remote</div>
+        <div class="stop-title">CitrusAd</div>
+        <div class="stop-years">2020–2021</div>
+        <div class="stop-details">
+          <ul>
+            <li>8 months—shortest stint, worst fit</li>
+            <li>Got blocked from doing the job he was hired for</li>
+            <li>Publicis was acquiring; politics won, he left</li>
+          </ul>
+          <button class="thread-btn">💬 What went wrong?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 10: Gopuff -->
+    <div class="stop" id="stop-10" data-stop="10">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">NYC Metro</div>
+        <div class="stop-title">Gopuff</div>
+        <div class="stop-years">2022–Present</div>
+        <div class="stop-details">
+          <ul>
+            <li>Wanted retailer-side experience after years on the sell side</li>
+            <li>Scaled Gopuff Ads data revenue from $3M to $14.8M in two years</li>
+            <li>Found Koddi (now Best Buy Ads) and Seek (now Fanatics) before anyone else</li>
+          </ul>
+          <button class="thread-btn">💬 How'd you spot Koddi and Seek early?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Era: The Pivot -->
+    <div class="era-label">
+      <h2>The Pivot</h2>
+    </div>
+
+    <!-- Stop 11: The Pivot -->
+    <div class="stop" id="stop-11" data-stop="11">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">—</div>
+        <div class="stop-title">The Pivot</div>
+        <div class="stop-years">April 2025</div>
+        <div class="stop-details">
+          <ul>
+            <li>Realized he was more energized building than selling</li>
+            <li>Started dedicating 40 hrs/week to AI development alongside day job</li>
+            <li>Not a career break—a deliberate second track</li>
+          </ul>
+          <button class="thread-btn">💬 Why make the switch?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 12: Building -->
+    <div class="stop" id="stop-12" data-stop="12">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">—</div>
+        <div class="stop-title">Building</div>
+        <div class="stop-years">2025–Present</div>
+        <div class="stop-details">
+          <ul>
+            <li>1,700+ hours of hands-on AI/agent development in 10 months</li>
+            <li>Created Triad Protocol for multi-agent coordination</li>
+            <li>Shipped: ChowChow, GoodKeep, HerdKit, Peer, JROS, 14+ custom agents</li>
+            <li>Built systems, not just prompts</li>
+          </ul>
+          <button class="thread-btn">💬 What's the Triad Protocol?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stop 13: Now -->
+    <div class="stop" id="stop-13" data-stop="13">
+      <div class="stop-marker"></div>
+      <div class="stop-content">
+        <div class="stop-location">—</div>
+        <div class="stop-title">Now</div>
+        <div class="stop-years">January 2026</div>
+        <div class="stop-details">
+          <ul>
+            <li>This site is the demo—built with Claude, not just about Claude</li>
+            <li>Applying to Anthropic because the mission matches the obsession</li>
+            <li>Wants to help others build what he's been building alone</li>
+          </ul>
+          <button class="thread-btn">💬 Why Anthropic?</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="back-top" id="backTop">↑</button>
+
+  <script>
+    // Entry selector
+    const entrySelector = document.getElementById('entrySelector');
+    const entryBtns = document.querySelectorAll('.entry-btn');
+
+    entryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        entrySelector.classList.add('hidden');
+
+        setTimeout(() => {
+          const el = document.getElementById(target);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 300);
+      });
+    });
+
+    // Scroll tracking
+    const stops = document.querySelectorAll('.stop');
+    const marker = document.getElementById('marker');
+    const backTop = document.getElementById('backTop');
+
+    function updateActiveStop() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const viewportCenter = scrollY + windowHeight / 2;
+
+      let closestStop = null;
+      let closestDistance = Infinity;
+
+      stops.forEach(stop => {
+        const rect = stop.getBoundingClientRect();
+        const stopCenter = scrollY + rect.top + rect.height / 2;
+        const distance = Math.abs(viewportCenter - stopCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestStop = stop;
+        }
+
+        // Activate stops that are in view
+        if (rect.top < windowHeight * 0.7 && rect.bottom > windowHeight * 0.3) {
+          stop.classList.add('active');
+        } else {
+          stop.classList.remove('active');
+        }
+      });
+
+      // Back to top button
+      if (scrollY > 500) {
+        backTop.classList.add('visible');
+      } else {
+        backTop.classList.remove('visible');
+      }
+    }
+
+    window.addEventListener('scroll', updateActiveStop);
+    updateActiveStop();
+
+    backTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Thread buttons (placeholder for chat integration)
+    document.querySelectorAll('.thread-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const question = btn.textContent.replace('💬 ', '');
+        // TODO: Open chat with this question
+        alert('Chat coming soon!\n\nQuestion: ' + question);
+      });
+    });
+  </script>
+
+</body>
+</html>

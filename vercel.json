@@ -2,7 +2,7 @@
   "buildCommand": null,
   "outputDirectory": "src",
   "rewrites": [
-    { "source": "/chat", "destination": "/chat/index.html" },
-    { "source": "/chat/(.*)", "destination": "/chat/$1" }
+    { "source": "/timeline", "destination": "/timeline/index.html" },
+    { "source": "/timeline/(.*)", "destination": "/timeline/$1" }
   ]
 }
